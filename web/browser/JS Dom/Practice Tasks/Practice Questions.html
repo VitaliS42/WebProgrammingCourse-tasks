@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<form action="">
+    <input id="taskLabel" type="text" placeholder="Введите задачу">
+    <button type="submit" id="addTaskButton">Добавить</button>
+</form>
+<ul id="taskList"></ul>
+
+
+<form id="registrationForm">
+    <label for="email">Email: </label>
+    <input type="email" id="email" name="email" required style="margin: 10px">
+    <span class="error" id="emailError"></span>
+    <br>
+
+    <label for="password">Password: </label>
+    <input type="password" id="password" name="password" required style="margin: 10px">
+    <span class="error" id="passwordError"></span>
+    <br>
+
+    <label for="confirmPassword">Confirm Password: </label>
+    <input type="password" id="confirmPassword" name="confirmPassword" required style="margin: 10px">
+    <span class="error" id="confirmPasswordError"></span>
+    <br>
+
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    // 1. Create a function that adds a class 'highlight' to elements when clicked
+    function clickToHighlight() {
+        document.addEventListener('click', (event) => {
+            if (event.target.classList.contains('highlight')) {
+                event.target.classList.remove('highlight');
+            } else {
+                event.target.classList.add('highlight');
+            }
+        })
+    }
+
+    // 2. Implement a simple todolist with add/remove functionalit
+
+    function removeTask(button) {
+        var listEl = button.parentNode;
+        listEl.parentNode.removeChild(listEl);
+    }
+
+    function addTask(event) {
+        event.preventDefault();
+
+        const taskLabelElement = document.querySelector('#taskLabel');
+        const label = taskLabelElement.value;
+
+        if (label.trim() === '') {
+            alert('Please enter a task.');
+            return;
+        }
+
+        let li = document.createElement('li');
+        const delButton = `<button onClick='removeTask(this)' style="margin: 10px">Удалить</button>`;
+        li.textContent = label;
+        document.querySelector('#taskList').appendChild(li);
+        li.insertAdjacentHTML('beforeend', delButton);
+        taskLabelElement.value = '';
+    }
+
+    document.querySelector('#addTaskButton').addEventListener('click', addTask);
+
+
+    // 3. Create a form validation that checks:
+
+    document.getElementById("registrationForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        document.getElementById("emailError").textContent = "";
+        document.getElementById("passwordError").textContent = "";
+        document.getElementById("confirmPasswordError").textContent = "";
+
+        let isValid = true;
+
+        const email = document.getElementById("email").value;
+        const emailError = document.getElementById("emailError");
+
+        const password = document.getElementById("password").value;
+        const passwordError = document.getElementById("passwordError");
+
+        const confirmPassword = document.getElementById("confirmPassword").value;
+        const confirmPasswordError = document.getElementById("confirmPasswordError");
+
+        if (!validateEmail(email)) {
+            emailError.textContent = "Введите корректный адрес электронной почты.";
+            isValid = false;
+        }
+        if (!validatePassword(password)) {
+            passwordError.textContent = "Пароль должен содержать минимум 8 символов, одну заглавную букву, одну строчную букву и одну цифру.";
+            isValid = false;
+        }
+        if (password !== confirmPassword) {
+            confirmPasswordError.textContent = "Пароли не совпадают.";
+            isValid = false;
+        }
+
+        if (isValid) {
+            alert("Форма успешно отправлена!");
+        }
+    });
+
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(String(email).toLowerCase());
+    }
+
+    function validatePassword(password) {
+        const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+        return re.test(password);
+    }
+
+</script>
+
+
