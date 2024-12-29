@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+</body>
+</html>
+
+<script>
+    // Task 5: Debug this function
+    function calculateTotal(prices) {
+        let total = 0;
+        prices.forEach(price => {
+            total += price;
+            console.log(`total is equal ${total}`)
+        });
+        return total;
+    }
+    calculateTotal([1,2,3,4,5,6])
+    // Add console.log statements to track the total variable
+
+    // Task 6: Add bugs to this code and fix them using DevTools
+    function findUser(users, id) {
+        const user = users.find(u => u.id === id);
+        if (user === undefined) {
+            return "No users found"
+        } else {
+            return user.name.toUpperCase();
+        }
+    }
+    const userList = [
+        { id: 1, name: "Aaron" },
+        { id: 2, name: "Aaryan" },
+        { id: 3, name: "Aaryn" },
+        { id: 4, name: "Aayan" },
+        { id: 5, name: "Aazaan" },
+        { id: 6, name: "Abaan" },
+        { id: 7, name: "Abbas" }
+    ];
+    console.log(findUser(userList, 8))
+    console.log(findUser(userList, 4))
+
+    // Your task: Add error handling and use DevTools to debug
+    // Take screenshots or video of the process
+</script>

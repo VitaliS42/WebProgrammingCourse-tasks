@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        th {
+            cursor: pointer;
+            background-color: #f2f2f2;
+        }
+        th:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+<input type="text" id="filterInput" placeholder="Фильтр">
+
+<table id="dataTable">
+    <thead>
+    <tr>
+        <th onclick="sortTable(0)">Name</th>
+        <th onclick="sortTable(1)">Age</th>
+        <th onclick="sortTable(2)">Country</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody id="tableBody">
+        <tr>
+            <td>
+                <input type="text" name="Name" id="Name">
+            </td>
+            <td>
+                <input type="number" name="Age" id="Age">
+            </td>
+            <td>
+                <input type="text" name="Country" id="Country">
+            </td>
+            <td>
+                <button id="addRowButton">Добавить</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+    document.getElementById('addRowButton').onclick = function() {
+        const name = document.getElementById('Name').value;
+        const age = document.getElementById('Age').value;
+        const country = document.getElementById('Country').value;
+
+        if (name && age && country) {
+            const tableBody = document.getElementById('tableBody');
+            const newRow = tableBody.insertRow();
+            newRow.innerHTML = `
+                    <td>${name}</td>
+                    <td>${age}</td>
+                    <td>${country}</td>
+                    <td><button onclick="deleteRow(this)">Удалить</button></td>
+                `;
+            document.getElementById('Name').value = null;
+            document.getElementById('Age').value = null;
+            document.getElementById('Country').value = null;
+        } else {
+            alert("Не все поля заполнены");
+        }
+    }
+
+    document.getElementById('filterInput').addEventListener('keypress', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#dataTable tbody tr');
+
+        rows.forEach(row => {
+            const cells = row.getElementsByTagName('td');
+            let found = false;
+
+            for (let i = 0; i < cells.length - 1; i++) {
+                if (cells[i].innerText.toLowerCase().includes(filter)) {
+                    found = true;
+                    break;
+                }
+            }
+            row.style.display = found ? "" : "none";
+        });
+    });
+
+    function deleteRow(button) {
+        if (confirm("Удалить строку?")) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+    }
+
+    function sortTable(index) {
+        const table = document.getElementById("tableBody");
+        const rows = Array.from(table.rows).slice(1);
+
+        if (index === 1) {
+            rows.sort((a, b) => {
+                const numA = parseFloat(a.children[index].firstChild.textContent);
+                const numB = parseFloat(b.children[index].firstChild.textContent);
+                return numA - numB;
+            });
+        } else {
+            rows.sort((a, b) => {
+                const textA = a.children[index].firstChild.textContent;
+                const textB = b.children[index].firstChild.textContent;
+                return textA.localeCompare(textB);
+            });
+        }
+        table.innerHTML = '<tr><td><input type="text" name="Name" id="Name"></td><td><input type="number" name="Age" id="Age"></td><td><input type="text" name="Country" id="Country"></td><td><button id="addRowButton">Добавить</button></td></tr>'
+
+        rows.forEach(row => {
+            console.log(row)
+            table.appendChild(row)
+            }
+        )
+    }
+</script>
+
+</body>
+</html>
