@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    class TodoManager {
+        constructor(rootElement) {
+            this.root = rootElement;
+            this.todos = [];
+            this.filterState = 'all'; // all, active, completed
+            this.counter = 0;
+
+            this.init();
+        }
+
+        init() {
+            this.getData();
+            this.createUI();
+            this.addEventListeners();
+            this.render();
+        }
+
+        getData(){ // забираем данные из LocalStorage. Там могут храниться только строки, поэтому разворачиваем JSON в объект
+            // for(let key in localStorage) {
+            //     localStorage.clear()
+            //     if (!localStorage.hasOwnProperty(key)) {continue;}
+            //     this.todos.push(JSON.parse(localStorage.getItem(key)))
+            // }
+        }
+
+        createUI(){ // первично создаем компоненты
+            let rootElement = document.querySelector(`${this.root}`)
+
+            const appHeader = document.createElement('div');
+            appHeader.className = 'appHeader';
+            rootElement.appendChild(appHeader);
+
+            const taskForm = document.createElement('div');
+            taskForm.className = 'taskForm';
+            taskForm.innerHTML = `<input type="text" name="newTaskName" id="newTaskName"><button id = 'createTaskButton'>Создать задачу</button>`
+            appHeader.appendChild(taskForm);
+
+            const taskFilter = document.createElement('div');
+            taskFilter.className = 'taskFilter';
+            taskFilter.innerHTML = `<label><input type="radio" name="status" value="all" checked>&nbspAll</label>
+                                    <label><input type="radio" name="status" value="active">&nbspActive</label>
+                                    <label><input type="radio" name="status" value="completed">&nbspCompleted</label>`
+            appHeader.appendChild(taskFilter);
+
+            const taskContainer = document.createElement('div');
+            taskContainer.className = 'taskContainer';
+            rootElement.appendChild(taskContainer);
+            this.todos.forEach(() => {  // наполняем контейнер задач
+                    const task = document.createElement('div');
+                    task.className = 'taskCard';
+                    task.innerHTML = `<h3>${task.text}</h3><p>${task.state}</p><button class="delete-btn">Delete</button><button class="edit-btn">Edit</button>`
+                    document.querySelector(`.taskContainer`).appendChild(task);
+                }
+            )
+        }
+
+        addEventListeners(){
+            // добавляем обработчик создания задачи
+            document.querySelector('#createTaskButton').addEventListener('click', () => {
+                this.counter+=1
+                let taskLabel = document.querySelector('#newTaskName')
+                localStorage.setItem(taskLabel.value,JSON.stringify({text: `${taskLabel.value}`, state: "active"}))
+                taskLabel.value=''
+                this.render()
+            })
+            // добавляем обработчик переключения фильтра
+            // добавляем обработчик
+
+        }
+        render(){
+            //удаляем все таски
+
+            //рисуем новый список тасок с учетом последних изменений
+
+            this.todos = localStorage
+            console.log(this.todos)
+            console.log(typeof this.todos)
+            this.todos.forEach((element) => {  // наполняем контейнер задач
+                    const task = document.createElement('div');
+                    task.className = 'taskCard';
+                    task.innerHTML = `<h3>${task.text}</h3><p>${task.state}</p><button class="delete-btn">Delete</button><button class="edit-btn">Edit</button>`
+                    document.querySelector(`.taskContainer`).appendChild(task);
+                }
+            )
+        }
+
+
+    }
+    microJira = new TodoManager('body')
+
+    // Implement CRUD operations for todos
+    // Add filtering (all/active/completed)
+    // Create a counter for remaining tasks
+    // Add priority levels to todos
+    // Implement drag-and-drop reordering
+    // Add due dates to todos
+</script>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    body{
+        height: 100%;
+        background: #c7c7c7;
+        background-size: cover;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    .appHeader {
+        padding: 30px;
+        display: flex;
+        align-items: center;
+    }
+    .taskFilter {
+        display: flex;
+    }
+    .taskFilter > label {
+        padding: 10px;
+        display: flex;
+        align-items: center;
+    }
+    .taskContainer {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 20px;
+    }
+    .taskCard {
+        width: 150px;
+        height: 150px;
+        border-radius: 30px;
+        background: #c7c7c7;
+        box-shadow:  25px 25px 50px #949494,
+        -25px -25px 50px #b2b2b2;
+        margin: 50px;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: stretch;
+        align-content: stretch;
+    }
+    .delete-btn {
+        background-color: darkslategray;
+    }
+    .edit-btn {
+        background-color: burlywood;
+    }
+</style>
