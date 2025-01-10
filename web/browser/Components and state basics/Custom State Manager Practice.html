@@ -27,11 +27,11 @@
         }
 
         getData(){ // забираем данные из LocalStorage. Там могут храниться только строки, поэтому разворачиваем JSON в объект
-            // for(let key in localStorage) {
-            //     localStorage.clear()
-            //     if (!localStorage.hasOwnProperty(key)) {continue;}
-            //     this.todos.push(JSON.parse(localStorage.getItem(key)))
-            // }
+            this.todos = []
+            for(let key in localStorage) {
+                if (!localStorage.hasOwnProperty(key)) {continue;}
+                this.todos.push(JSON.parse(localStorage.getItem(key)))
+            }
         }
 
         createUI(){ // первично создаем компоненты
@@ -56,13 +56,17 @@
             const taskContainer = document.createElement('div');
             taskContainer.className = 'taskContainer';
             rootElement.appendChild(taskContainer);
-            this.todos.forEach(() => {  // наполняем контейнер задач
-                    const task = document.createElement('div');
-                    task.className = 'taskCard';
-                    task.innerHTML = `<h3>${task.text}</h3><p>${task.state}</p><button class="delete-btn">Delete</button><button class="edit-btn">Edit</button>`
-                    document.querySelector(`.taskContainer`).appendChild(task);
-                }
-            )
+            // this.todos.forEach((element) => {  // наполняем контейнер задач
+            //         const task = document.createElement('div');
+            //         task.className = 'taskCard';
+            //         task.innerHTML = `<h3>${element.text}</h3>
+            //                               <label><input type="checkbox" id="activeCheckbox" ${element.completed ? 'checked' : ''}/>${element.completed ? 'Выполнено' : 'Не выполнено'}</label>
+            //                               <button class="delete-btn">Delete</button>
+            //                               <button class="edit-btn">Edit</button>`
+            //
+            //         document.querySelector(`.taskContainer`).appendChild(task);
+            //     }
+            // )
         }
 
         addEventListeners(){
@@ -70,36 +74,55 @@
             document.querySelector('#createTaskButton').addEventListener('click', () => {
                 this.counter+=1
                 let taskLabel = document.querySelector('#newTaskName')
-                localStorage.setItem(taskLabel.value,JSON.stringify({text: `${taskLabel.value}`, state: "active"}))
-                taskLabel.value=''
+                localStorage.setItem(taskLabel.value,JSON.stringify({text: `${taskLabel.value}`, completed: false}))
+                taskLabel.value = ''
+                this.getData()
                 this.render()
             })
             // добавляем обработчик переключения фильтра
-            // добавляем обработчик
-
         }
         render(){
             //удаляем все таски
+            document.querySelector(`.taskContainer`).innerHTML = null;
 
             //рисуем новый список тасок с учетом последних изменений
-
-            this.todos = localStorage
-            console.log(this.todos)
-            console.log(typeof this.todos)
             this.todos.forEach((element) => {  // наполняем контейнер задач
                     const task = document.createElement('div');
                     task.className = 'taskCard';
-                    task.innerHTML = `<h3>${task.text}</h3><p>${task.state}</p><button class="delete-btn">Delete</button><button class="edit-btn">Edit</button>`
+                    task.innerHTML = `<h3>${element.text}</h3>
+                                      <label><input type="checkbox" id="activeCheckbox" ${element.completed ? 'checked' : ''}/>${element.completed ? 'Выполнено' : 'Не выполнено'}</label>
+                                      <button class="delete-btn">Delete</button>
+                                      <button class="edit-btn">Edit</button>`
                     document.querySelector(`.taskContainer`).appendChild(task);
+
+                    task.querySelector('.delete-btn').addEventListener('click', () => {this.deleteCard(element.text)})
+
+                    task.querySelector('#activeCheckbox').addEventListener('click', () => {
+                        localStorage.setItem(element.text,JSON.stringify({text: `${element.text}`, completed: !element.completed}))
+                        this.getData()
+                        this.render()
+                    })
                 }
             )
+        }
+
+        deleteCard(name) {
+            const keyToDelete = name;
+
+            if (localStorage.getItem(keyToDelete) !== null) {
+                localStorage.removeItem(keyToDelete);
+            } else {
+                console.log(`Элемент с ключом "${keyToDelete}" не найден.`);
+            }
+            this.getData()
+            this.render()
         }
 
 
     }
     microJira = new TodoManager('body')
 
-    // Implement CRUD operations for todos
+    // Implement CRUD operations for todos+
     // Add filtering (all/active/completed)
     // Create a counter for remaining tasks
     // Add priority levels to todos
